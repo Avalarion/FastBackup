@@ -30,7 +30,6 @@
  * @author Bastian Bringenberg <mail@bastian-bringenberg.de>
  * @link https://github.com/bbnetz/FastBackup
  *
- * @info Needs to be lowercase, even if TYPO3 is written uppercase only
  */
 class wbb_worker extends basic_worker{
 
@@ -41,7 +40,7 @@ class wbb_worker extends basic_worker{
 	 * @return void
 	 */
 	public function run() {
-		$db = $this->fetchDatabase($this->instancePath);
+		$db = $this->fetchDatabase();
 		$this->saveMySQL($db['user'], $db['pass'], $db['db'], $db['host']);
 		$this->saveFiles($this->instancePath, 'WBB');
 		$this->writeFinalTar();

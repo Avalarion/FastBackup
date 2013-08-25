@@ -41,7 +41,7 @@ class typo3_worker extends basic_worker{
 	 * @return void
 	 */
 	public function run() {
-		$db = $this->fetchDatabase($this->instancePath);
+		$db = $this->fetchDatabase();
 		$this->saveMySQL($db['user'], $db['pass'], $db['db'], $db['host']);
 		$this->saveFiles($this->instancePath, 'TYPO3');
 		$this->writeFinalTar();

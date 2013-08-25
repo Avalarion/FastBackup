@@ -143,4 +143,19 @@ abstract class basic_worker {
 		exec('tar cfz '.$tmpFilename.' '.$path);
 	}
 
+	/**
+	 * function cleanUpComments
+	 * cleaning up PHP files from comments so that only real used informations remain
+	 *
+	 * @param string $string the php files content as string
+	 * @return string the cleaned up PHP File
+	 */
+	protected function cleanUpComments($string) {
+		$string = preg_replace('|\#.*|', '', $string);
+		$string = preg_replace('/\/\/.*/', '', $string);
+		$string = preg_replace('|\/\*\*.*?\*\/|s', '', $string);
+		return $string;
+	}
+
+
 }
