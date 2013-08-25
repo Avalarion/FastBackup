@@ -27,18 +27,36 @@
 
 /**
  * Class basicWorker
+ * @abstract
  * @author Bastian Bringenberg <mail@bastian-bringenberg.de>
  * @link https://github.com/bbnetz/FastBackup
  *
  */
 abstract class basic_worker {
 
+	/**
+	 * @var string $instancePath the path to the installed service
+	 */
 	protected $instancePath = '';
 
+	/**
+	 * @var string $backupFilename the path to the backupFile
+	 */
 	protected $backupFilename = '';
 
+	/**
+	 * @var string $tmpDir the location where everything 
+	 */
 	protected $tmpDir = '';
 
+	/**
+	 * function __construct
+	 * Constructor for all workers
+	 *
+	 * @param string $instancePath the path to the installed service
+	 * @param string $backupFilename the path to the backupfile
+	 * @return void
+	 */
 	public function __construct($instancePath, $backupFilename) {
 		$this->instancePath = $instancePath;
 		$this->backupFilename = $backupFilename;
@@ -55,10 +73,23 @@ abstract class basic_worker {
 	public function __destruct() {
 		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->tmpDir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path)
     		$path->isFile() ? unlink($path->getPathname()) : rmdir($path->getPathname());
+    	rmdir($this->tmpDir);
 	}
 
+	/**
+	 * function run
+	 *  
+	 *
+	 * @return void
+	 */
 	abstract public function run();
 
+	/**
+	 * function getTmpDir
+	 * checks for a good temp dir
+	 *
+	 * @return void
+	 */
 	protected function getTmpDir() {
 		$tmp = sys_get_temp_dir().DIRECTORY_SEPARATOR.'bb_backup-'.time().DIRECTORY_SEPARATOR;
 		if(file_exists($this->tmpDir))
@@ -67,19 +98,43 @@ abstract class basic_worker {
 		return $tmp;
 	}
 
+	/**
+	 * function writeFinalTar
+	 * writes the backup file itself
+	 *
+	 * @return void
+	 */
 	protected function writeFinalTar() {
 		echo 'Final TAR created.'.PHP_EOL;
 		exec('tar cfz '.$this->backupFilename.' '.$this->tmpDir.'*');
 	}
 
+	/**
+	 * function saveMySQL
+	 * Gets informations for a mysql connection and saves in temp directory
+	 *
+	 * @param string $user the database user
+	 * @param string $pass the database password
+	 * @param string $db the database itself
+	 * @param string $host the database host
+	 * @return void 
+	 */
 	protected function saveMySQL($user, $pass, $db, $host='localhost') {
 		echo 'MySQL File created:'.PHP_EOL;
 		echo '  User:     '.$user.PHP_EOL;
 		echo '  Database: '.$db.PHP_EOL;
 		echo '  Host:     '.$host.PHP_EOL;
-		exec('mysqldump -u'.$user.' -p'.$pass.' -h'.$host.' '.$db.' > '.$this->tmpDir.'mysql_'.$user.'_'.$db.'sql');
+		exec('mysqldump -u'.$user.' -p'.$pass.' -h'.$host.' '.$db.' > '.$this->tmpDir.'mysql_'.$user.'_'.$db.'.sql');
 	}
 
+	/**
+	 * function saveFiles
+	 * creates a tarball of given files under temp directory
+	 *
+	 * @param string $path the origin to backup
+	 * @param string $title the title for the tar file
+	 * @return void
+	 */
 	protected function saveFiles($path, $title) {
 		if(!file_exists($path)) 
 			die('Location from '.$path.' is not existing.');
