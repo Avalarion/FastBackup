@@ -157,5 +157,16 @@ abstract class basic_worker {
 		return $string;
 	}
 
-
+	/**
+	 * function fetchSingleValue
+	 * fetches single attribute from $fileContent
+	 *
+	 * @param string $singleValue the value to search for
+	 * @param string $fileContent the PHP scripts content to fetch the value from
+	 * @return string the last found $singleValue in $fileContent
+	 */
+	protected function fetchSingleValue($singleValue, $fileContent) {
+		preg_match_all('/\$'.$singleValue.'\s*=\s*(.*?);/', $fileContent, $tmp);
+		return str_replace(array('"', "'"), array('', ''), $tmp[1][count($tmp[1])-1]);
+	}
 }

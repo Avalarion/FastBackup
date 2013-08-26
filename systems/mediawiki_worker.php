@@ -40,7 +40,6 @@ class mediawiki_worker extends basic_worker{
 	 * @return void
 	 */
 	public function run() {
-		echo "run";
 		$db = $this->fetchDatabase();
 		$this->saveMySQL($db['user'], $db['pass'], $db['db'], $db['host']);
 		$this->saveFiles($this->instancePath, 'WBB');
@@ -78,6 +77,24 @@ class mediawiki_worker extends basic_worker{
 	protected function fetchSingleValue($singleValue, $fileContent) {
 		preg_match_all('/\$'.$singleValue.'\s*=\s*(.*?);/', $fileContent, $tmp);
 		return str_replace(array('"', "'"), array('', ''), $tmp[1][count($tmp[1])-1]);
+	}
+
+	/**
+	 * function secureCode
+	 * removes insecure lines from code to ensure
+	 *
+	 * @todo remove file Arguments?
+	 * @todo enable 
+	 * @param string $string the code to secure
+	 * @return string the cleaned code
+	 */
+	protected function secureCode($string) {
+		preg_replace('/require_once\s*\(.*?;/', '', $string);
+		preg_replace('/require\s*\(.*?;/', '', $string);
+		preg_replace('/include_once\s*\(.*?;/', '', $string);
+		preg_replace('/include\s*\(.*?;/', '', $string);
+		preg_replace('/eval\s*\(.*?;/', '', $string);
+		return $string;
 	}
 
 }
