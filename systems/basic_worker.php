@@ -171,20 +171,34 @@ abstract class basic_worker {
 	}
 
 	/**
+	 * function fetchSingleConstant
+	 * fetches single attribute from $fileContent's Constatnt
+	 *
+	 * @param string $singleValue the constant to search for
+	 * @param string $fileContent the PHP scripts content to fetch the value from
+	 * @return string the last found $singleValue in $fileContent
+	 */
+	protected function fetchSingleConstant($singleValue, $fileContent) {
+		preg_match_all('/define\\s*\\(\\s*[\\\'\\"]'.$singleValue.'[\\\'\\"]\\s*,\\s*[\\\'\\"](.*?)[\\\'\\"]/', $fileContent, $tmp);
+		return str_replace(array('"', "'"), array('', ''), $tmp[1][count($tmp[1])-1]);
+	}
+
+	/**
 	 * function secureCode
 	 * removes insecure lines from code to ensure
 	 *
 	 * @todo remove file Arguments?
-	 * @todo enable 
+	 * @todo enable some requires
 	 * @param string $string the code to secure
 	 * @return string the cleaned code
 	 */
 	protected function secureCode($string) {
-		preg_replace('/require_once\s*\(.*?;/', '', $string);
-		preg_replace('/require\s*\(.*?;/', '', $string);
-		preg_replace('/include_once\s*\(.*?;/', '', $string);
-		preg_replace('/include\s*\(.*?;/', '', $string);
-		preg_replace('/eval\s*\(.*?;/', '', $string);
+		$string = str_replace(array('<?php', '<?'), array('', ''), $string);
+		$string = preg_replace('/require_once\s*\(.*?;/', '', $string);
+		$string = preg_replace('/require\s*\(.*?;/', '', $string);
+		$string = preg_replace('/include_once\s*\(.*?;/', '', $string);
+		$string = preg_replace('/include\s*\(.*?;/', '', $string);
+		$string = preg_replace('/eval\s*\(.*?;/', '', $string);
 		return $string;
 	}
 }

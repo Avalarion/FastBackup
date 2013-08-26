@@ -59,12 +59,10 @@ class wordpress_worker extends basic_worker{
 			die('No MediaWiki found');
 		$string = file_get_contents($file);
 		$string = $this->cleanUpComments($string);
-		$string = $this->secureCode($string);
-		eval($string);
-		$db['user'] = DB_USER;
-		$db['pass'] = DB_PASSWORD;
-		$db['db'] = DB_NAME;
-		$db['host'] = DB_HOST;
+		$db['user'] = $this->fetchSingleConstant('DB_USER', $string);
+		$db['pass'] = $this->fetchSingleConstant('DB_PASSWORD', $string);
+		$db['db'] = $this->fetchSingleConstant('DB_NAME', $string);
+		$db['host'] = $this->fetchSingleConstant('DB_HOST', $string);
 		return $db;
 	}
 

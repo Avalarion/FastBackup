@@ -46,7 +46,7 @@ Creates a backup of MediaWiki's database and complete filesystem stored under `O
 
 Creates a backup of WBB's database and complete filesystem stored under `ORIGIN`.
 
-### Wordpress ( Planned )
+### Wordpress
 
 Creates a backup of Wordpress' database and complete filesystem stored under `ORIGIN`.
 
